@@ -59,6 +59,28 @@ void crearNombreArchivo(char fecha[], char nombreArchivo[])
     strcat(nombreArchivo, ".dat");   
 }
 
+long buscarMozo(char nombreArchivo[], int idBuscada, Mozo &m)
+{
+    FILE* f = fopen(nombreArchivo, "rb+");
+
+    fseek(f, 0, SEEK_END);
+    long n = ftell(f) / sizeof(Mozo);
+    long primero = 0, ultimo = n - 1, pos = -1;
+
+    while(primero <= ultimo && pos == -1)
+    {
+        long medio = (primero + ultimo) / 2;
+        fseek(f, medio * sizeof(Mozo), SEEK_SET);
+        fread(&m, sizeof(Mozo), 1, f);
+        if(m.idMozo == idBuscada) pos = medio;
+        else if(idBuscada > m.idMozo) primero = medio + 1;
+        else ultimo = medio - 1; 
+    }
+
+    fclose(f);
+    return pos;
+
+}
 
 int main(int argc, char const *argv[])
 {
