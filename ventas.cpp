@@ -4,8 +4,7 @@ using namespace std;
 
 
 const int CORRIMIENTO = 5;
-
-
+const float TASA_COMISION = 0.10f;
 
 struct Mozo
 {
@@ -24,6 +23,11 @@ struct Comanda
 };
 
 
+float calcularComision(float precio, int cantidad)
+{
+    return precio * cantidad * TASA_COMISION;
+}
+
 bool encriptarYValidar(char clave[], int len, Mozo mozo)
 {
 
@@ -37,7 +41,7 @@ bool encriptarYValidar(char clave[], int len, Mozo mozo)
        i++;
     }
 
-    return (strcmp(claveEncriptada, mozo.password) == 0); 
+    return strcmp(claveEncriptada, mozo.password) == 0; 
        
 }
 
