@@ -113,7 +113,7 @@ int main(int argc, char const *argv[])
 {
     char fecha[20];
     char nombreArchivo[50];
-    cout << "Ingrese la fecha (DD-MM-AAAA): ";
+    cout << "Ingrese la fecha (DD-MM-AAAA): " << endl;
     cin >> fecha;
 
     crearNombreArchivo(fecha, nombreArchivo);
@@ -121,7 +121,7 @@ int main(int argc, char const *argv[])
     FILE* archivo = fopen(nombreArchivo, "ab+");
 
     int idMozo;
-    cout << "Ingrese id del Mozo: ";
+    cout << "Ingrese id del Mozo: " << endl;
     cin >> idMozo;
 
     Mozo m;
@@ -130,22 +130,32 @@ int main(int argc, char const *argv[])
 
     while(posicion == -1)
     {
-        cout << "No se encontró un mozo con esa ID, intente nuevamente: ";
+        cout << "No se encontró un mozo con esa ID, intente nuevamente: " << endl;
         cin >> idMozo;
         int posicion = buscarMozo("mozos.dat", idMozo, m);
     }
 
     char clave[20];
-    cout << "Ingrese la clave: ";
+    cout << "Ingrese la clave: " << endl;
     cin >> clave[20];
 
     if(!encriptarYValidar(clave, 20, m))
     {
-        cout << "Clave incorrecta";
+        cout << "Clave incorrecta" << endl;
     }
     else
     {
-       
+        Producto p;
+        int codigoProducto;
+        cout << "Ingrese un producto";
+        cin >> codigoProducto;
+        int posicion = buscarProducto("inventario.dat", codigoProducto, p);
+        while(posicion == -1)
+        {
+            cout << "No se encontró el producto, intente nuevamente: " << endl;
+            
+
+        }
     }
 
 
