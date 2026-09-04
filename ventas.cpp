@@ -29,6 +29,12 @@ struct Comanda
     float comision;
 };
 
+struct Producto {
+    int codigo;
+    char descripcion[50];
+    float precio;
+    int stockActual;
+};
 
 float calcularComision(float precio, int cantidad)
 {
@@ -61,7 +67,7 @@ void crearNombreArchivo(char fecha[], char nombreArchivo[])
 
 long buscarMozo(char nombreArchivo[], int idBuscada, Mozo &m)
 {
-    FILE* f = fopen(nombreArchivo, "rb+");
+    FILE* f = fopen(nombreArchivo, "rb");
 
     fseek(f, 0, SEEK_END);
     long n = ftell(f) / sizeof(Mozo);
@@ -80,6 +86,27 @@ long buscarMozo(char nombreArchivo[], int idBuscada, Mozo &m)
     fclose(f);
     return pos;
 
+}
+
+long buscarProducto(char nombreArchivo[], int codigo, Producto &p)
+{
+    FILE* f = fopen(nombreArchivo, "rb");
+
+    fseek(f, 0, SEEK_END);
+    long n = ftell(f) / sizeof(Producto);
+    long primero = 0, ultimo = n - 1, pos = -1;
+
+    while(primero <= ultimo && pos == -1)
+    {
+        long medio = (primero + ultimo) / 2;
+        fseek(f, medio * sizeof(Mozo), SEEK_SET);
+        fread(&p, sizeof(Mozo), 1, f);
+        if(p.codigo == codigo) pos = medio;
+        else if(codigo > p.codigo) primero = medio + 1;
+        else ultimo = medio - 1;
+    }
+    fclose(f);
+    return pos;
 }
 
 int main(int argc, char const *argv[])
@@ -118,7 +145,7 @@ int main(int argc, char const *argv[])
     }
     else
     {
-        cout << "Ingrese un producto";
+       
     }
 
 
