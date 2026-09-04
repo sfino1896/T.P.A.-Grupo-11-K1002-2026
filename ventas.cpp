@@ -88,6 +88,7 @@ long buscarMozo(char nombreArchivo[], int idBuscada, Mozo &m)
 
 }
 
+
 long buscarProducto(char nombreArchivo[], int codigo, Producto &p)
 {
     FILE* f = fopen(nombreArchivo, "rb");
@@ -99,14 +100,22 @@ long buscarProducto(char nombreArchivo[], int codigo, Producto &p)
     while(primero <= ultimo && pos == -1)
     {
         long medio = (primero + ultimo) / 2;
-        fseek(f, medio * sizeof(Mozo), SEEK_SET);
-        fread(&p, sizeof(Mozo), 1, f);
+        fseek(f, medio * sizeof(Producto), SEEK_SET);
+        fread(&p, sizeof(Producto), 1, f);
         if(p.codigo == codigo) pos = medio;
         else if(codigo > p.codigo) primero = medio + 1;
         else ultimo = medio - 1;
     }
     fclose(f);
     return pos;
+}
+
+bool hayStock(char nombreArchivo[], long pos, Producto &p)
+{
+    FILE* f = fopen(nombreArchivo, "rb");
+    fseek(f, pos * sizeof(Producto), SEEK_SET);
+    fread(&p, sizeof(Producto), 1, f);
+    return (p.stockActual == 0) ? false : true;
 }
 
 int main(int argc, char const *argv[])
@@ -147,15 +156,20 @@ int main(int argc, char const *argv[])
     {
         Producto p;
         int codigoProducto;
-        cout << "Ingrese un producto";
+        cout << "Ingrese un producto" << endl;
         cin >> codigoProducto;
         int posicion = buscarProducto("inventario.dat", codigoProducto, p);
         while(posicion == -1)
         {
             cout << "No se encontró el producto, intente nuevamente: " << endl;
-            
-
+            cin >> codigoProducto;
+            posicion = buscarProducto("inventario.dat", codigoProducto, p); 
         }
+
+        int cantidad;
+        cout << "Ingrese cantidad: " << endl;
+        cin >> cantidad;
+
     }
 
 
