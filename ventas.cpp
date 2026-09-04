@@ -110,12 +110,12 @@ long buscarProducto(char nombreArchivo[], int codigo, Producto &p)
     return pos;
 }
 
-bool hayStock(char nombreArchivo[], long pos, Producto &p)
+bool hayStock(char nombreArchivo[], long pos, Producto &p, int cantidad)
 {
     FILE* f = fopen(nombreArchivo, "rb");
     fseek(f, pos * sizeof(Producto), SEEK_SET);
     fread(&p, sizeof(Producto), 1, f);
-    return (p.stockActual == 0) ? false : true;
+    return (p.stockActual <= cantidad) ? false : true;
 }
 
 int main(int argc, char const *argv[])
@@ -165,10 +165,13 @@ int main(int argc, char const *argv[])
             cin >> codigoProducto;
             posicion = buscarProducto("inventario.dat", codigoProducto, p); 
         }
-
-        int cantidad;
-        cout << "Ingrese cantidad: " << endl;
-        cin >> cantidad;
+        if(hayStock("inventario.dat", posicion, p))
+        {
+            int cantidad;
+            cout << "Ingrese cantidad: " << endl;
+            cin >> cantidad;
+            int comision = calcularComision(p.precio, cantidad);
+        }
 
     }
 
