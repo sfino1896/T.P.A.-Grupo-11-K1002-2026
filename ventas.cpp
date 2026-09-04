@@ -135,13 +135,13 @@ int main(int argc, char const *argv[])
 
     Mozo m;
 
-    int posicion = buscarMozo("mozos.dat", idMozo, m);
+    int posicionMozo = buscarMozo("mozos.dat", idMozo, m);
 
-    while(posicion == -1)
+    while(posicionMozo == -1)
     {
         cout << "No se encontró un mozo con esa ID, intente nuevamente: " << endl;
         cin >> idMozo;
-        int posicion = buscarMozo("mozos.dat", idMozo, m);
+        posicionMozo = buscarMozo("mozos.dat", idMozo, m);
     }
 
     char clave[20];
@@ -158,19 +158,37 @@ int main(int argc, char const *argv[])
         int codigoProducto;
         cout << "Ingrese un producto" << endl;
         cin >> codigoProducto;
-        int posicion = buscarProducto("inventario.dat", codigoProducto, p);
-        while(posicion == -1)
+        int posicionProducto = buscarProducto("inventario.dat", codigoProducto, p);
+        while(posicionProducto == -1)
         {
             cout << "No se encontró el producto, intente nuevamente: " << endl;
             cin >> codigoProducto;
-            posicion = buscarProducto("inventario.dat", codigoProducto, p); 
+            posicionProducto = buscarProducto("inventario.dat", codigoProducto, p); 
         }
-        if(hayStock("inventario.dat", posicion, p))
+        int cantidad;
+        cout << "Ingrese cantidad: " << endl;
+        cin >> cantidad;
+        if(hayStock("inventario.dat", posicionProducto, p, cantidad))
         {
-            int cantidad;
-            cout << "Ingrese cantidad: " << endl;
-            cin >> cantidad;
-            int comision = calcularComision(p.precio, cantidad);
+            
+            float comision = calcularComision(p.precio, cantidad);
+            Comanda c;
+            c.idMozo = idMozo;
+            c.codigoProducto = codigoProducto;
+            c.cantidad = cantidad;
+            c.comision = comision;
+
+            //Guarda la comanda al final del archivo del día
+            fseek(archivo, 0, SEEK_END);
+            fwrite(&c, sizeof(Comanda), 1, archivo);
+
+            //Actualiza el stock del producto
+            p.stockActual -= cantidad;
+
+            FILE* inventario = fopen("inventario.dat", "wb+");
+            fseek(inventario, posicionProducto * sizeof(Producto), SEEK_SET);
+            fwrite(&p, sizeof(Producto), 1, archivo);
+
         }
 
     }
