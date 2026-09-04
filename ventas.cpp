@@ -93,6 +93,35 @@ int main(int argc, char const *argv[])
 
     FILE* archivo = fopen(nombreArchivo, "ab+");
 
+    int idMozo;
+    cout << "Ingrese id del Mozo: ";
+    cin >> idMozo;
+
+    Mozo m;
+
+    int posicion = buscarMozo("mozos.dat", idMozo, m);
+
+    while(posicion == -1)
+    {
+        cout << "No se encontró un mozo con esa ID, intente nuevamente: ";
+        cin >> idMozo;
+        int posicion = buscarMozo("mozos.dat", idMozo, m);
+    }
+
+    char clave[20];
+    cout << "Ingrese la clave: ";
+    cin >> clave[20];
+
+    if(!encriptarYValidar(clave, 20, m))
+    {
+        cout << "Clave incorrecta";
+    }
+    else
+    {
+        cout << "Ingrese un producto";
+    }
+
+
     return 0;
     
 }
