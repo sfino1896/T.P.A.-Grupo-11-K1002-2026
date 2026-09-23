@@ -151,7 +151,7 @@ void ordenarComandas(char nombreArchivo[])
     }
 
     fclose(f);
-    
+
 }
 
 
@@ -242,7 +242,7 @@ int main(int argc, char const *argv[])
 
     fclose(archivo);
 
-
+    ordenarComandas(nombreArchivo);
 
     return 0;
     
