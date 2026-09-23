@@ -36,6 +36,7 @@ struct Producto {
     int stockActual;
 };
 
+
 float calcularComision(float precio, int cantidad)
 {
     return precio * cantidad * TASA_COMISION;
@@ -56,7 +57,6 @@ bool encriptarYValidar(char clave[], int len, Mozo mozo)
     return strcmp(claveEncriptada, mozo.password) == 0; 
        
 }
-
 
 void crearNombreArchivo(char fecha[], char nombreArchivo[])
 {
@@ -88,7 +88,6 @@ long buscarMozo(char nombreArchivo[], int idBuscada, Mozo &m)
 
 }
 
-
 long buscarProducto(char nombreArchivo[], int codigo, Producto &p)
 {
     FILE* f = fopen(nombreArchivo, "rb");
@@ -118,6 +117,7 @@ bool hayStock(char nombreArchivo[], long pos, Producto &p, int cantidad)
     return (p.stockActual <= cantidad) ? false : true;
 }
 
+
 int main(int argc, char const *argv[])
 {
     char fecha[20];
@@ -146,7 +146,7 @@ int main(int argc, char const *argv[])
 
     char clave[20];
     cout << "Ingrese la clave: " << endl;
-    cin >> clave[20];
+    cin >> clave;
 
     if(!encriptarYValidar(clave, 20, m))
     {
@@ -188,7 +188,7 @@ int main(int argc, char const *argv[])
             FILE* inventario = fopen("inventario.dat", "wb+");
             fseek(inventario, posicionProducto * sizeof(Producto), SEEK_SET);
             fwrite(&p, sizeof(Producto), 1, archivo);
-
+            fclose(inventario);
         }
 
     }
