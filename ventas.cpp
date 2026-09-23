@@ -114,7 +114,9 @@ bool hayStock(char nombreArchivo[], long pos, Producto &p, int cantidad)
     FILE* f = fopen(nombreArchivo, "rb");
     fseek(f, pos * sizeof(Producto), SEEK_SET);
     fread(&p, sizeof(Producto), 1, f);
-    return (p.stockActual <= cantidad) ? false : true;
+    fclose(f);
+
+    return cantidad <= p.stockActual;
 }
 
 
@@ -185,9 +187,9 @@ int main(int argc, char const *argv[])
             //Actualiza el stock del producto
             p.stockActual -= cantidad;
 
-            FILE* inventario = fopen("inventario.dat", "wb+");
+            FILE* inventario = fopen("inventario.dat", "rb+");
             fseek(inventario, posicionProducto * sizeof(Producto), SEEK_SET);
-            fwrite(&p, sizeof(Producto), 1, archivo);
+            fwrite(&p, sizeof(Producto), 1, inventario);
             fclose(inventario);
         }
 
