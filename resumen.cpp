@@ -17,7 +17,6 @@ struct comanda{
 	int cantidad;
 	float comision;
 };
-const int MAX_MOZOS = 20; //memoria fisica de mozos
 
 int main (){
 	cout <<"=========Resumen de la semana========="<<endl;
@@ -40,34 +39,31 @@ int main (){
 		}
 
 	}
- 	int mozoP[MAX_MOZOS] = {0};   // productos/platos
-    float mozoC[MAX_MOZOS] = {0.0f};  // total a pagar
 
     int total = 0; // total productos buffet
     comanda registro;
-    while (fread(&registro, sizeof(comanda), 1, f) == 1) {
-        int mozoActual = registro.idMozo;
-
-        if (mozoActual >= 1 && mozoActual <= MAX_MOZOS) {
-            mozoP[mozoActual - 1] += registro.cantidad;  //ventas
-            
-            mozoC[mozoActual - 1] += registro.comision;  //paga comision
-        }
-
-        total += registro.cantidad;
-    }
-    fclose(f);
     cout << "============= REPORTES DE VENTAS =============" << endl;
-    for (int i = 0; i < MAX_MOZOS; i++) {
-        if (mozoP[i] > 0) {
-            cout << "Mozo ID: " << i + 1<< endl;
-            cout << "Productos vendidos: " << mozoP[i] << endl;
-            cout << "Comision a pagar: $" << mozoC[i] << endl;
+    //------------------------------------------------------CORTE DE CONTROL
+        bool registroActual = fread(&registro, sizeof(comanda), 1, f) == 1; // control de registro por leer
+        while (registroActual) {
+        	int mozoActual = registro.idMozo;
+			int productos = 0;
+			float comisionTotal = 0.0f;
+			while(registroActual && registro.idMozo == mozoActual){			// controlo que sea el mismo mozo
+				productos += registro.cantidad;  //ventas
+            	comisionTotal += registro.comision;  //paga comision
+				total += registro.cantidad;
+				registroActual = fread(&registro, sizeof(comanda),1,f) == 1;	//siguiente registro
+			}
+            
+  			//termino de leer el mozo actual
+            cout << "Mozo ID: " << mozoActual << endl;
+            cout << "Productos vendidos: " << productos << endl;
+            cout << "Comision a pagar: $" << comisionTotal << endl;
             cout << "--------------------------------------------" << endl;
-        }
     }
 
-
+  	fclose(f);
     cout << "==============================================" << endl;
     cout << "TOTAL DE PRODUCTOS VENDIDOS EN EL BUFFET ESA SEMANA: " <<total<< endl;
     return 0;	
