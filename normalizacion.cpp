@@ -1,8 +1,12 @@
+#include <iostream>
+#include <string>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-//  Structs (tal cual la ficha tecnica) 
+using namespace std;
+
+//  Structs tal cual la ficha tecnica
 
 struct ComandaHistorica {
     char fecha[11];        // "DD-MM-AAAA"
@@ -42,7 +46,7 @@ const int MAX_FECHAS = 100;
 
 const int K = 5; // corrimiento para "encriptar" las claves (facil de deshacer: restando K)
 
-// Encriptado de claves (corrimiento simple, char por char) 
+// Encriptado de claves 
 // Se puede deshacer restando K a cada caracter. Elegimos suma/resta y no division
 // porque la division pierde informacion (varios valores de entrada dan el mismo
 // resultado) y no se puede volver al valor original.
@@ -55,7 +59,7 @@ void encriptar(char destino[20], const char* origen) {
     destino[i] = '\0';
 }
 
-// Buscar (o crear) un mozo por nombre en el arreglo en memoria
+// Buscar o crear un mozo por nombre en el arreglo en memoria
 // Busqueda lineal: en este punto los mozos todavia no tienen ningun orden
 // particular (van apareciendo a medida que leemos el historico), asi que no
 // hay forma de hacer algo mejor que recorrer.
@@ -75,9 +79,8 @@ int buscarOCrearMozo(Mozo mozos[], int &cantMozos, const char* nombre) {
     nuevo.totalComision = 0.0f;
 
     // Clave inicial: el numero de mozo como texto, ya encriptada
-    char claveInicial[20];
-    sprintf(claveInicial, "%d", nuevo.idMozo);
-    encriptar(nuevo.password, claveInicial);
+    string claveInicial = to_string(nuevo.idMozo);
+    encriptar(nuevo.password, claveInicial.c_str());
 
     mozos[cantMozos] = nuevo;
     cantMozos++;
@@ -128,7 +131,7 @@ int main() {
     //1) Leer todo el historico a memoria 
     FILE* fHist = fopen("comandas_historicas.dat", "rb");
     if (fHist == NULL) {
-        printf("No se pudo abrir comandas_historicas.dat\n");
+        cout << "No se pudo abrir comandas_historicas.dat" << endl;
         return 1;
     }
 
@@ -138,7 +141,7 @@ int main() {
         cantHistoricas++;
     }
     fclose(fHist);
-    printf("Ventas historicas leidas: %d\n", cantHistoricas);
+    cout << "Ventas historicas leidas: " << cantHistoricas << endl;
 
     //2) Armar la lista de mozos con su comision acumulada
     Mozo mozos[MAX_MOZOS];
@@ -152,7 +155,7 @@ int main() {
     FILE* fMozos = fopen("mozos.dat", "wb");
     fwrite(mozos, sizeof(Mozo), cantMozos, fMozos);
     fclose(fMozos);
-    printf("Mozos generados: %d (mozos.dat)\n", cantMozos);
+    cout << "Mozos generados: " << cantMozos << " (mozos.dat)" << endl;
 
     //3) Separar las ventas por dia, con idMozo y ordenadas 
     char fechasProcesadas[MAX_FECHAS][11];
@@ -187,14 +190,13 @@ int main() {
         ordenarPorMozo(delDia, cantDelDia);
 
         // Nombre de archivo: comandas_DD-MM-AAAA.dat (la fecha ya viene en ese formato)
-        char nombreArchivo[40];
-        sprintf(nombreArchivo, "comandas_%s.dat", historicas[i].fecha);
+        string nombreArchivo = string("comandas_") + historicas[i].fecha + ".dat";
 
-        FILE* fDia = fopen(nombreArchivo, "wb");
+        FILE* fDia = fopen(nombreArchivo.c_str(), "wb");
         fwrite(delDia, sizeof(Comanda), cantDelDia, fDia);
         fclose(fDia);
 
-        printf("Planilla generada: %s (%d ventas)\n", nombreArchivo, cantDelDia);
+        cout << "Planilla generada: " << nombreArchivo << " (" << cantDelDia << " ventas)" << endl;
 
         strcpy(fechasProcesadas[cantFechas], historicas[i].fecha);
         cantFechas++;
@@ -207,7 +209,7 @@ int main() {
 
     FILE* fInv = fopen("inventario.dat", "rb");
     if (fInv == NULL) {
-        printf("No se pudo abrir inventario.dat\n");
+        cout << "No se pudo abrir inventario.dat" << endl;
         delete[] historicas;
         return 1;
     }
@@ -234,10 +236,10 @@ int main() {
     }
     fclose(fInvUpd);
 
-    printf("Inventario actualizado (inventario.dat)\n");
+    cout << "Inventario actualizado (inventario.dat)" << endl;
 
     delete[] historicas;
 
-    printf("\nNormalizacion terminada con exito.\n");
+    cout << "\nNormalizacion terminada con exito." << endl;
     return 0;
 }
